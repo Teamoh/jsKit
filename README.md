@@ -1,2 +1,2 @@
 # jsKit
-Just a collection of some useful methods.
+Just a collection of some useful JavaScript methods.

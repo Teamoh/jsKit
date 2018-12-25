@@ -1,13 +1,13 @@
 /*	
 *	jsKit - A Handy Survival-Kit for JavaScript Developers
 */
-var jsKit = (function () {
+let jsKit = (function () {
 	'use strict';
 
 	/*
 	if (typeof Array.prototype.forEach === 'undefined') {
 		Array.prototype.forEach = function (fn, ctx) {
-			var i, iLen;
+			let i, iLen;
 			
 			for (i = 0, iLen = this.length; i < iLen; i++) {
 				if (typeof ctx !== 'undefined') {
@@ -22,7 +22,7 @@ var jsKit = (function () {
 
 	if (typeof Array.prototype.indexOf === 'undefined') {
 		Array.prototype.indexOf = function (searchValue, start) {
-			var i, iLen;
+			let i, iLen;
 			
 			for (i = start || 0, iLen = this.length; i < iLen; i++) {
 				if (this[i] === searchValue) {
@@ -35,7 +35,7 @@ var jsKit = (function () {
 
 	if (typeof Function.prototype.bind === 'undefined') {
 		Function.prototype.bind = function (newThat) {
-			var that = this;
+			let that = this;
 			return function () {
 				return that.apply(newThat, arguments); 
 			};	
@@ -45,7 +45,7 @@ var jsKit = (function () {
 
 	// ### jsKit
 
-	var _js = {
+	let _js = {
 		'constants': {
 			'alphabet': 'abcdefghijklmnopqrstuvwxyz'.split(''),
 			'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
@@ -64,7 +64,7 @@ var jsKit = (function () {
 			},
 			'get': function (url, onsuccess) {
 				if (_js.ajax.check()) {
-					var req = new XMLHttpRequest();
+					let req = new XMLHttpRequest();
 
 					req.onreadystatechange = function () {
 						if (req.readyState == 4 && req.status == 200) {
@@ -83,7 +83,7 @@ var jsKit = (function () {
 			},
 			'post': function (url, data, onsuccess, requestHeader) {
 				if (_js.ajax.check()) {
-					var req = new XMLHttpRequest();
+					let req = new XMLHttpRequest();
 
 					req.onreadystatechange = function () {
 						if (req.readyState == 4 && req.status == 200) {
@@ -98,9 +98,9 @@ var jsKit = (function () {
 					req.send(data || '');
 				}
 				else {
-					var data = data.split('&');
-					var form = document.createElement('form');
-					var i, iLen, pair, input;
+					let data = data.split('&');
+					let form = document.createElement('form');
+					let i, iLen, pair, input;
 
 					form.method = 'POST';
 					form.action = url;
@@ -122,19 +122,19 @@ var jsKit = (function () {
 			}
 		},
 		'bind': function (fn, that) {
-			// this is a closure!!! the returned function still has access to the outer vars
+			// this is a closure!!! the returned function still has access to the outer lets
 			return function () {
 				return fn.apply(that, arguments);
 			};
 		},
 		'camelCase': function (text, seperator) {
 			if (seperator != '') {
-				var pos = text.indexOf(seperator);
+				let pos = text.indexOf(seperator);
 
 				while (pos > -1) {
-					var part1 = text.substring(0, pos);
-					var part2 = text.substring(pos + 1);
-					var upper_letter = part2.charAt(0).toUpperCase();
+					let part1 = text.substring(0, pos);
+					let part2 = text.substring(pos + 1);
+					let upper_letter = part2.charAt(0).toUpperCase();
 
 					text = part1 + upper_letter + part2.substring(1);
 					pos = text.indexOf(seperator);
@@ -149,7 +149,7 @@ var jsKit = (function () {
 		},
 		'cookies': {
 			'set': function (name, value, expires, path) {
-				var cookieString = name + '=' + value;
+				let cookieString = name + '=' + value;
 
 				if (expires !== undefined) {
 					cookieString += '; expires=';
@@ -172,17 +172,17 @@ var jsKit = (function () {
 				document.cookie = cookieString;
 			},
 			'get': function (name) {
-				var cookies = '; ' + document.cookie;
-				var parts = cookies.split('; ' + name + '=');
+				let cookies = '; ' + document.cookie;
+				let parts = cookies.split('; ' + name + '=');
 
 				if (parts.length > 1) { // if splitting was successful
 					return parts[1].split(';')[0];
 				}
 			},
 			'getAll': function () {
-				var obj = {};
-				var cookies = document.cookie.split('; ');
-				var i, iLen, parts, key, value;
+				let obj = {};
+				let cookies = document.cookie.split('; ');
+				let i, iLen, parts, key, value;
 
 				for (i = 0, iLen = cookies.length; i < iLen; i++) {
 					parts = cookies[i].split('=');
@@ -199,7 +199,7 @@ var jsKit = (function () {
 			}
 		},
 		'createElement': function (str) {
-			var element, matches;
+			let element, matches;
 
 			str = str.trim();
 
@@ -216,7 +216,7 @@ var jsKit = (function () {
 
 			if (matches.attributes) {
 				matches.attributes.forEach(function (el) {
-					var parts = el.slice(1, -1).split('='); // remove brackets, split key/value
+					let parts = el.slice(1, -1).split('='); // remove brackets, split key/value
 					element.setAttribute(parts.shift(), parts.join('='));
 					str = str.replace(el, ''); // remove the current attribute in the string so we can savely extract the id and classes
 				});
@@ -240,15 +240,15 @@ var jsKit = (function () {
 			return element;
 		},
 		'delegate': (function () {
-			var listeners = {};
+			let listeners = {};
 
 			return function (eventType, selector, callback) {
 				if (listeners[eventType] === undefined) {
 					listeners[eventType] = {}; // new eventType detected, so create a new object for it and add the event to the html element
 
 					document.documentElement.addEventListener(eventType, function (e) {
-						var currentElement = e.target;
-						var selector;
+						let currentElement = e.target;
+						let selector;
 
 						bubblingLoop:
 						while (currentElement && currentElement !== document) {
@@ -273,7 +273,7 @@ var jsKit = (function () {
 		})(),
 		'equals': function (obj1, obj2) {
 			function compare(a, b) {
-				var prop, i, iLen;
+				let prop, i, iLen;
 
 				if (_js.isObject(a) && _js.isObject(b)) { // two objects
 					for (prop in a) {
@@ -356,12 +356,12 @@ var jsKit = (function () {
 			return compare;
 		})(),
 		'extract': function (str, selector) {
-			var div = document.createElement('div');
+			let div = document.createElement('div');
 			div.innerHTML = str;
 			return div.querySelector(selector).innerHTML;
 		},
 		'extractBodyContent': function (myString) {
-			var s1, s2, s3;
+			let s1, s2, s3;
 
 			if (/<body/.test(myString) && /<\/body>/.test(myString)) {
 				s1 = myString.split('<body')[1];
@@ -372,8 +372,8 @@ var jsKit = (function () {
 			}
 		},
 		'flatten': function (arr) {
-			var data = [];
-			var i, iLen;
+			let data = [];
+			let i, iLen;
 
 			for (i = 0, iLen = arr.length; i < iLen; i++) {
 				if (_js.isArray(arr[i])) {
@@ -387,8 +387,8 @@ var jsKit = (function () {
 			return data;
 		},
 		'getAudio': function (mpegSrc, oggSrc) {
-			var audio = document.createElement('audio');
-			var content = '<source src="' + mpegSrc + '" type="audio/mpeg">'
+			let audio = document.createElement('audio');
+			let content = '<source src="' + mpegSrc + '" type="audio/mpeg">'
 
 			if (typeof oggSrc === 'string') {
 				content += '<source src="' + oggSrc + '" type="audio/ogg">';
@@ -401,7 +401,7 @@ var jsKit = (function () {
 			return new Date(year, month + 1, 0).getDate();
 		},
 		'getFormElements': function (container) {
-			var elements = {
+			let elements = {
 				inputs: _js.toArray(container.getElementsByTagName('input')),
 				selects: _js.toArray(container.getElementsByTagName('select')),
 				textareas: _js.toArray(container.getElementsByTagName('textarea'))
@@ -410,11 +410,11 @@ var jsKit = (function () {
 			return elements.inputs.concat(elements.selects, elements.textareas);
 		},
 		'getId': (function () {
-			var ids = [];
+			let ids = [];
 
 			function generate(len, charset) {
-				var id = '';
-				var i;
+				let id = '';
+				let i;
 
 				for (i = 0; i < len; i++) {
 					id += charset[Math.floor(Math.random() * charset.length)]
@@ -424,7 +424,7 @@ var jsKit = (function () {
 			}
 
 			return function (len, charset) {
-				var id;
+				let id;
 
 				len = len || 20;
 
@@ -442,8 +442,8 @@ var jsKit = (function () {
 			}
 		})(),
 		'getGuid': (function () {
-			var guids = [];
-			var pattern = 'xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx'; // the 4 stands for the GUID-version (random)
+			let guids = [];
+			let pattern = 'xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx'; // the 4 stands for the GUID-version (random)
 
 			function generate() {
 				return pattern.replace(/x/g, function () {
@@ -452,7 +452,7 @@ var jsKit = (function () {
 			}
 
 			return function () {
-				var guid;
+				let guid;
 
 				do {
 					guid = generate();
@@ -476,9 +476,9 @@ var jsKit = (function () {
 			}
 
 			if (hex.length == 6) {
-				var r = parseInt(hex.substr(0, 2), 16);
-				var g = parseInt(hex.substr(2, 2), 16);
-				var b = parseInt(hex.substr(4, 2), 16);
+				let r = parseInt(hex.substr(0, 2), 16);
+				let g = parseInt(hex.substr(2, 2), 16);
+				let b = parseInt(hex.substr(4, 2), 16);
 				return r + ', ' + g + ', ' + b;
 			}
 		},
@@ -498,7 +498,7 @@ var jsKit = (function () {
 			return string.substring(0, index) + (add || '') + string.substring(index + deleteLength);
 		},
 		'invertColor': function (color) {
-			var values;
+			let values;
 
 			if (color.charAt(0) === '#') {
 				color = color.slice(1);
@@ -523,11 +523,11 @@ var jsKit = (function () {
 			return parseInt(num) === num;
 		},
 		'touchedViewport': function (el) { // check if an element is partly in the viewport
-			var rect = el.getBoundingClientRect();
+			let rect = el.getBoundingClientRect();
 			return (rect.top <= window.innerHeight && rect.bottom >= 0 && rect.left <= window.innerWidth && rect.right >= 0);
 		},
 		'insideViewport': function (el) { // check if an element is completly in the viewport
-			var rect = el.getBoundingClientRect();
+			let rect = el.getBoundingClientRect();
 			return (rect.top >= 0 && rect.bottom <= window.innerHeight && rect.left >= 0 && rect.right <= window.innerWidth);
 		},
 		'isMac': navigator.platform.toLowerCase().indexOf('mac') > -1,
@@ -538,11 +538,11 @@ var jsKit = (function () {
 			});
 		},
 		'matchesSelector': function (element, selector) {
-			var p = Element.prototype;
+			let p = Element.prototype;
 
 			return (p.matches || p.webkitMatchesSelector || p.mozMatchesSelector || p.msMatchesSelector || p.oMatchesSelector || function (s) {
-				var matches = document.querySelectorAll(s);
-				var i, iLen;
+				let matches = document.querySelectorAll(s);
+				let i, iLen;
 
 				for (i = 0, iLen = matches.length; i < iLen; i++) {
 					if (matches[i] === this) {
@@ -554,8 +554,8 @@ var jsKit = (function () {
 			}).call(element, selector);
 		},
 		'numToText': function (num) {
-			var numString = '';
-			var numerals, rests, currentLength, currentPart;
+			let numString = '';
+			let numerals, rests, currentLength, currentPart;
 
 			num = parseInt(num);
 
@@ -626,7 +626,7 @@ var jsKit = (function () {
 			};
 
 			function getNumPart(n) {
-				var nString = '';
+				let nString = '';
 
 				if (n.length === 1) {
 					nString = numerals[n];
@@ -686,8 +686,8 @@ var jsKit = (function () {
 			return subj;
 		},
 		'parseHTML': function (html) {
-			var template = document.createElement('template');
-			var fragment, container;
+			let template = document.createElement('template');
+			let fragment, container;
 
 			if ('content' in template) {
 				template.innerHTML = html;
@@ -709,7 +709,7 @@ var jsKit = (function () {
 			return fragment;
 		},
 		'preloadImage': function (src, onload) {
-			var img = document.createElement('img');
+			let img = document.createElement('img');
 
 			if (typeof onload === 'function') {
 				img.onload = function (e) {
@@ -723,7 +723,7 @@ var jsKit = (function () {
 		'rand': function (min, max) {
 			if (arguments.length == 2) {
 				if (min > max) {
-					max = [min, min = max][0]; // swap the two vars
+					max = [min, min = max][0]; // swap the two lets
 				}
 
 				return (min + (Math.random() * (max - min)));
@@ -753,7 +753,7 @@ var jsKit = (function () {
 			}
 		},
 		'removeClassByClassName': function (className, container) {
-			var elements;
+			let elements;
 
 			container = container || document;
 			elements = container.getElementsByClassName(className);
@@ -763,7 +763,7 @@ var jsKit = (function () {
 			}
 		},
 		'removeElements': function (selector, container) {
-			var elements;
+			let elements;
 
 			container = container || document;
 			elements = container.querySelectorAll(selector);
@@ -781,8 +781,8 @@ var jsKit = (function () {
 			return null;
 		},
 		'repeat': function (times, fn, args) {
-			var iLen = +times;
-			var i;
+			let iLen = +times;
+			let i;
 
 			if (typeof fn === 'function') {
 				for (i = 0; i < iLen; i++) {
@@ -809,8 +809,8 @@ var jsKit = (function () {
 		},
 		'serialize': function (container) {
 			// for POST you can use 'new FormData(form)'
-			var data = [];
-			var elements, i, iLen, element, name, j, jLen;
+			let data = [];
+			let elements, i, iLen, element, name, j, jLen;
 
 			if (container.tagName == 'FORM') {
 				elements = container.elements;
@@ -920,9 +920,9 @@ var jsKit = (function () {
 			return Object.prototype.toString.call(subj).split(' ')[1].slice(0, -1).toLowerCase();
 		},
 		'parseURL': function (url, parseSearch) {
-			var a = document.createElement('a');
-			var props = ['hash', 'host', 'hostname', 'href', 'origin', 'password', 'pathname', 'port', 'protocol', 'search', 'username'];
-			var result = {};
+			let a = document.createElement('a');
+			let props = ['hash', 'host', 'hostname', 'href', 'origin', 'password', 'pathname', 'port', 'protocol', 'search', 'username'];
+			let result = {};
 
 			a.href = (typeof url === 'string') ? url : '';
 
@@ -962,7 +962,7 @@ var jsKit = (function () {
 			return result;
 		},
 		'HTMLEntityDecode': function (text) {
-			var textarea = document.createElement('textarea');
+			let textarea = document.createElement('textarea');
 			textarea.innerHTML = text;
 			return textarea.value;
 		},
@@ -974,12 +974,12 @@ var jsKit = (function () {
 			return text;
 		},
 		'bindData': (function () { // bind data in key-value-pairs to some object
-			var keys = [], values = [];
+			let keys = [], values = [];
 
 			return function (target, key, value) {
-				var vals;
-				var match = keys.indexOf(target);
-				var prop;
+				let vals;
+				let match = keys.indexOf(target);
+				let prop;
 
 				if (arguments.length === 3) { // write
 					if (match === -1) {
@@ -1007,7 +1007,7 @@ var jsKit = (function () {
 			};
 		})(),
 		'containsOnly': function (subj, val) {
-			var i, iLen;
+			let i, iLen;
 
 			if (typeof subj === 'string') {
 				subj = subj.split('');
@@ -1021,8 +1021,8 @@ var jsKit = (function () {
 			return true;
 		},
 		'getGETParameter': function (p) {
-			var search = location.search;
-			var params = {};
+			let search = location.search;
+			let params = {};
 
 			if (search) {
 				search = search.slice(1).split('&');
@@ -1036,7 +1036,7 @@ var jsKit = (function () {
 			return (p === undefined) ? params : params[p];
 		},
 		'isPrimeNumber': function (number) {
-			var i;
+			let i;
 
 			if (number % 1 === 0) {
 				for (i = 2; i < number; i++) {
@@ -1051,7 +1051,7 @@ var jsKit = (function () {
 			return false;
 		},
 		'removeChilds': function (element) {
-			var counter = 0;
+			let counter = 0;
 
 			while (element.hasChildNodes()) { // innerHTML seems to be slower than removeChild
 				element.removeChild(element.lastChild);
@@ -1072,7 +1072,7 @@ var jsKit = (function () {
 		},
 		'supportsCSS': (function () {
 			return CSS.supports || function (prop, val) {
-				var div = document.createElement('div');
+				let div = document.createElement('div');
 
 				if (prop !== undefined && prop in div.style) {
 					div.style[prop] = val;
@@ -1086,8 +1086,8 @@ var jsKit = (function () {
 			return !a !== !b;
 		},
 		'countCharacters': function (input) {
-			var chars = {};
-			var i, iLen, currentChar;
+			let chars = {};
+			let i, iLen, currentChar;
 
 			input += '';
 
@@ -1104,18 +1104,15 @@ var jsKit = (function () {
 		'shuffleArray': function (a) {
 			for (let i = a.length - 1; i > 0; i--) {
 				const j = Math.floor(Math.random() * (i + 1));
-				console.log(`Swapping ${i} with ${j}`);
 				[a[i], a[j]] = [a[j], a[i]];
 			}
 			return a;
 		},
-
 		/* ##################### TESTING AREA ##################### */
-
 		'include': function (attr) {
 			attr = attr || 'data-include';
-			var elements = document.querySelectorAll('[' + attr + ']');
-			var i, iLen;
+			let elements = document.querySelectorAll('[' + attr + ']');
+			let i, iLen;
 
 			function insertResponse(el) {
 				_js.ajax.get(el.getAttribute(attr), function (req) {
@@ -1129,9 +1126,9 @@ var jsKit = (function () {
 			}
 		},
 		'forEach': function (subj, fn, args) {
-			var i = 0;
-			var iLen = subj.length;
-			var prop;
+			let i = 0;
+			let iLen = subj.length;
+			let prop;
 
 			if (_js.isArray(subj) || _js.isHTMLCollection(subj) || _js.isNodeList(subj)) {
 				for (; i < iLen; i++) {
@@ -1152,7 +1149,7 @@ var jsKit = (function () {
 			}
 		},
 		'loadScript': function (url, callback) {
-			var script = document.createElement('script');
+			let script = document.createElement('script');
 
 			if (typeof callback === 'function') {
 				script.addEventListener('onload', callback, false);
@@ -1163,7 +1160,7 @@ var jsKit = (function () {
 			document.body.appendChild(script); // start loading (in opposite to media elements scripts need to be added to the DOM)
 		},
 		'scroll': function (a, callback) {
-			var y, el, dir, step;
+			let y, el, dir, step;
 
 			function scrollStep() {
 				if (window.scrollY !== y) {
@@ -1195,8 +1192,8 @@ var jsKit = (function () {
 			}
 		},
 		'onAppear': (function () {
-			var setListener = false;
-			var elements = [];
+			let setListener = false;
+			let elements = [];
 
 			return function (element, callback) {
 				if (!setListener) {
@@ -1224,11 +1221,11 @@ var jsKit = (function () {
 			};
 		})(),
 		'promise': function (callback) {
-			var value, resolveHandler, rejectHandler, returnedResolve, returnedReject;
-			var state = 'pending';
-			var promiseProto = {
+			let value, resolveHandler, rejectHandler, returnedResolve, returnedReject;
+			let state = 'pending';
+			let promiseProto = {
 				then: function (onRes, onRej) {
-					var newPromise = _js.promise(function (resolve, reject) {
+					let newPromise = _js.promise(function (resolve, reject) {
 						returnedResolve = resolve;
 						returnedReject = reject;
 					});
@@ -1268,7 +1265,7 @@ var jsKit = (function () {
 					return newPromise;
 				},
 				catch: function (onRej) {
-					var newPromise = _js.promise(function (resolve, reject) {
+					let newPromise = _js.promise(function (resolve, reject) {
 						returnedResolve = resolve;
 						returnedReject = reject;
 					});
@@ -1290,7 +1287,7 @@ var jsKit = (function () {
 					return newPromise;
 				}
 			};
-			var promise = Object.create(promiseProto);
+			let promise = Object.create(promiseProto);
 
 			function resolve(msg) { // may be called async
 				if (state === 'pending') {
@@ -1346,7 +1343,7 @@ var jsKit = (function () {
 			return promise;
 		},
 		'observeProperty': function (obj, prop, onchange) {
-			var value = obj[prop];
+			let value = obj[prop];
 
 			if (delete obj[prop] && typeof onchange === 'function') {
 				Object.defineProperty(obj, prop, {
@@ -1362,7 +1359,7 @@ var jsKit = (function () {
 			}
 		},
 		'params': function (input) {
-			var rv, parts, position, key
+			let rv, parts, position, key
 
 			if (typeof input === 'string') {
 				position = input.indexOf('?');
@@ -1375,7 +1372,7 @@ var jsKit = (function () {
 				rv = {};
 
 				parts.forEach(function (part) {
-					var keyValue = part.split('=');
+					let keyValue = part.split('=');
 					rv[keyValue[0]] = keyValue[1];
 				});
 			}
@@ -1397,8 +1394,8 @@ var jsKit = (function () {
 			return rv;
 		},
 		'jsonp': function (url, callback, paramName) {
-			var script = document.createElement('script');
-			var callbackName = 'jsKit_' + Math.floor(Math.random() * 1e12) + Math.floor(Math.random() * 1e12);
+			let script = document.createElement('script');
+			let callbackName = 'jsKit_' + Math.floor(Math.random() * 1e12) + Math.floor(Math.random() * 1e12);
 
 			if (typeof callback === 'function') {
 				window[callbackName] = callback;
@@ -1413,7 +1410,7 @@ var jsKit = (function () {
 			}
 		},
 		'deferred': function () {
-			var def = {};
+			let def = {};
 
 			def.promise = _js.promise(function (resolve, reject) {
 				def.resolve = resolve;
@@ -1423,10 +1420,10 @@ var jsKit = (function () {
 			return def;
 		},
 		'getObjectKeyPathes': function (obj) {
-			var result = {};
+			let result = {};
 
 			function nextLevel(startWith, o) {
-				var i, iLen, prop, currentPath;
+				let i, iLen, prop, currentPath;
 
 				if (_js.isArray(o)) {
 					for (i = 0, iLen = o.length; i < iLen; i++) {
@@ -1485,7 +1482,7 @@ var jsKit = (function () {
 		},
 		'fillTemplate': function (template, data) {
 			return template && String(template).replace(/\{\{(\s?[^\}]+)\}\}/g, function (match, key) { // match mustaches
-				var result;
+				let result;
 				key = key.trim();
 
 				try {
@@ -1500,8 +1497,8 @@ var jsKit = (function () {
 			});
 		},
 		'curry': function (fn) {
-			var that = this;
-			var args = [];
+			let that = this;
+			let args = [];
 
 			if (typeof fn === 'function') {
 				return function currying() {
@@ -1512,9 +1509,9 @@ var jsKit = (function () {
 		},
 		'inlineStylesheet': function (stylesheet) {
 			return new Promise(function (resolve, reject) {
-				var doc = document.cloneNode(true);
-				var currentCssRule, currentSelection;
-				var removeElements, xhr;
+				let doc = document.cloneNode(true);
+				let currentCssRule, currentSelection;
+				let removeElements, xhr;
 
 				function getDoctypeString(doctype) {
 					return '<!DOCTYPE ' + doctype.name + (doctype.publicId ? ' PUBLIC "' + doctype.publicId + '"' : '') + (!doctype.publicId && doctype.systemId ? ' SYSTEM' : '') + (doctype.systemId ? ' "' + doctype.systemId + '"' : '') + '>';
@@ -1554,9 +1551,9 @@ var jsKit = (function () {
 					xhr = new XMLHttpRequest();
 
 					xhr.onload = function () {
-						var style = document.createElement('style');
-						var output = getDoctypeString(document.doctype);
-						var removeElements;
+						let style = document.createElement('style');
+						let output = getDoctypeString(document.doctype);
+						let removeElements;
 
 						style.innerHTML = xhr.responseText.replace(/\/\*[^]*?\*\//gm, '');
 						doc.head.appendChild(style);
@@ -1586,9 +1583,9 @@ var jsKit = (function () {
 			});
 		},
 		'getNextDSTDate': function (startDate) { // get next date of Daylight Saving Time
-			var date = (startDate instanceof Date) ? startDate : new Date();
-			var max = 365;
-			var i, diff, currentDiff;
+			let date = (startDate instanceof Date) ? startDate : new Date();
+			let max = 365;
+			let i, diff, currentDiff;
 
 			date.setHours(23, 59, 59);
 			diff = date.getTimezoneOffset();
@@ -1611,15 +1608,15 @@ var jsKit = (function () {
 		},
 		'Observable': (function () {
 			function Observable(callback, initVal) {
-				var that = this;
-				var value;
+				let that = this;
+				let value;
 
 				if (typeof callback === 'function') {
 					that.observers = [];
 					value = initVal;
 
 					callback.call(that, function (newVal) { // setter
-						var oldVal;
+						let oldVal;
 
 						if (newVal !== value) {
 							oldVal = value;
@@ -1639,7 +1636,7 @@ var jsKit = (function () {
 			}
 
 			Observable.prototype.subscribe = function (observer) {
-				var that = this;
+				let that = this;
 
 				if (typeof observer === 'function') {
 					that.observers.push(observer);
@@ -1650,15 +1647,15 @@ var jsKit = (function () {
 			};
 
 			Observable.prototype.unsubscribe = function (observer) {
-				var i = this.observers.indexOf(observer);
+				let i = this.observers.indexOf(observer);
 				return i > -1 ? this.observers.splice(i, 1)[0] : null;
 			};
 
 			return Observable;
 		})(),
 		'random': function () { // this method should return a more random number by using `window.crypto` than the usual `Math.random`
-			var length, source, numbers;
-			var random = Math.random();
+			let length, source, numbers;
+			let random = Math.random();
 
 			if (!crypto || !random) { // if random is zero, return it to avoid problems in following logic
 				return random;
