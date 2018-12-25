@@ -4,47 +4,6 @@
 let jsKit = (function () {
 	'use strict';
 
-	/*
-	if (typeof Array.prototype.forEach === 'undefined') {
-		Array.prototype.forEach = function (fn, ctx) {
-			let i, iLen;
-			
-			for (i = 0, iLen = this.length; i < iLen; i++) {
-				if (typeof ctx !== 'undefined') {
-					fn.call(ctx, this[i], i, this);
-				}
-				else {
-					fn(this[i], i, this);
-				}
-			}
-		};
-	}
-
-	if (typeof Array.prototype.indexOf === 'undefined') {
-		Array.prototype.indexOf = function (searchValue, start) {
-			let i, iLen;
-			
-			for (i = start || 0, iLen = this.length; i < iLen; i++) {
-				if (this[i] === searchValue) {
-					return i;
-				}
-			}
-			return -1;
-		}
-	}
-
-	if (typeof Function.prototype.bind === 'undefined') {
-		Function.prototype.bind = function (newThat) {
-			let that = this;
-			return function () {
-				return that.apply(newThat, arguments); 
-			};	
-		}
-	}
-	*/
-
-	// ### jsKit
-
 	let _js = {
 		'constants': {
 			'alphabet': 'abcdefghijklmnopqrstuvwxyz'.split(''),
@@ -1101,14 +1060,17 @@ let jsKit = (function () {
 		'digitSum': function (x) {
 			return (x - 1) % 9 + 1; // magic math
 		},
-		'shuffleArray': function (a) {
-			for (let i = a.length - 1; i > 0; i--) {
+		'shuffle': function (a) {
+			// if a single array is given, use that, otherwise use the arguments object
+			let arr = (Array.isArray(a) && arguments.length === 1) ? a : _js.toArray(arguments);
+
+			for (let i = arr.length - 1; i > 0; i--) {
 				const j = Math.floor(Math.random() * (i + 1));
 				// [a[i], a[j]] = [a[j], a[i]]; -> would be nicer but destructuring is not supported in IE11
-				a[i] = [a[j], a[j] = a[i]][0];
+				arr[i] = [arr[j], arr[j] = arr[i]][0];
 			}
 
-			return a;
+			return arr;
 		},
 		/* ##################### TESTING AREA ##################### */
 		'include': function (attr) {
@@ -1665,7 +1627,7 @@ let jsKit = (function () {
 
 			length = random.toString().split('.').pop().length;
 			source = crypto.getRandomValues(new Uint16Array(length));
-			numbers = Array.prototype.slice.call(source, 0).map(function (rand) {
+			numbers = _js.toArray(source).map(function (rand) {
 				return rand.toString().split('').map(Number).reduce(function (acc, el) {
 					return acc + el; // calculate digit sum
 				}, 0);
