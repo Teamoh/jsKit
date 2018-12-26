@@ -1,7 +1,7 @@
 /*	
 *	jsKit - A Handy Survival-Kit for JavaScript Developers
 */
-let jsKit = (function () {
+var jsKit = (function () {
 	'use strict';
 
 	let _js = {
@@ -23,7 +23,7 @@ let jsKit = (function () {
 			},
 			'get': function (url, onsuccess) {
 				if (_js.ajax.check()) {
-					let req = new XMLHttpRequest();
+					const req = new XMLHttpRequest();
 
 					req.onreadystatechange = function () {
 						if (req.readyState == 4 && req.status == 200) {
@@ -42,7 +42,7 @@ let jsKit = (function () {
 			},
 			'post': function (url, data, onsuccess, requestHeader) {
 				if (_js.ajax.check()) {
-					let req = new XMLHttpRequest();
+					const req = new XMLHttpRequest();
 
 					req.onreadystatechange = function () {
 						if (req.readyState == 4 && req.status == 200) {
@@ -57,17 +57,16 @@ let jsKit = (function () {
 					req.send(data || '');
 				}
 				else {
-					let data = data.split('&');
-					let form = document.createElement('form');
-					let i, iLen, pair, input;
+					const data = data.split('&');
+					const form = document.createElement('form');
 
 					form.method = 'POST';
 					form.action = url;
 
 					// add for each prop-value pair one single input-element
-					for (i = 0, iLen = data.length; i < iLen; i++) {
-						pair = data[i].split('=');
-						input = document.createElement('input');
+					for (let i = 0, iLen = data.length; i < iLen; i++) {
+						const pair = data[i].split('=');
+						const input = document.createElement('input');
 
 						input.type = 'text';
 						input.name = pair[0];
@@ -80,27 +79,27 @@ let jsKit = (function () {
 				}
 			}
 		},
-		'bind': function (fn, that) {
+		'bind': function (fn, _this) {
 			// this is a closure!!! the returned function still has access to the outer lets
 			return function () {
-				return fn.apply(that, arguments);
+				return fn.apply(_this, arguments);
 			};
 		},
 		'camelCase': function (text, seperator) {
-			if (seperator != '') {
+			if (seperator) {
 				let pos = text.indexOf(seperator);
 
 				while (pos > -1) {
-					let part1 = text.substring(0, pos);
-					let part2 = text.substring(pos + 1);
-					let upper_letter = part2.charAt(0).toUpperCase();
+					const part1 = text.substring(0, pos);
+					const part2 = text.substring(pos + 1);
+					const upperCaseChar = part2.charAt(0).toUpperCase();
 
-					text = part1 + upper_letter + part2.substring(1);
+					text = part1 + upperCaseChar + part2.substring(1);
 					pos = text.indexOf(seperator);
 				}
-
-				return text;
 			}
+	
+			return text;
 		},
 		'class': function (className, context) {
 			context = context || document;
@@ -131,38 +130,36 @@ let jsKit = (function () {
 				document.cookie = cookieString;
 			},
 			'get': function (name) {
-				let cookies = '; ' + document.cookie;
-				let parts = cookies.split('; ' + name + '=');
+				const cookies = '; ' + document.cookie;
+				const parts = cookies.split('; ' + name + '=');
 
 				if (parts.length > 1) { // if splitting was successful
 					return parts[1].split(';')[0];
 				}
+
+				return null;
 			},
 			'getAll': function () {
-				let obj = {};
-				let cookies = document.cookie.split('; ');
-				let i, iLen, parts, key, value;
+				const result = {};
+				const cookies = document.cookie.split('; ');
 
-				for (i = 0, iLen = cookies.length; i < iLen; i++) {
-					parts = cookies[i].split('=');
-					key = parts[0];
-					value = parts[1];
+				cookies.forEach(function (cookie) {
+					const parts = cookie.split('=');
+					const key = parts[0];
+					const value = parts[1];
+					result[key] = value;
+				});
 
-					obj[key] = value;
-				}
-
-				return obj;
+				return result;
 			},
 			'delete': function (name) {
 				document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
 			}
 		},
 		'createElement': function (str) {
-			let element, matches;
-
 			str = str.trim();
 
-			matches = {
+			const matches = {
 				tag: str.match(/^[a-z]+/i),
 				attributes: str.match(/\[[^\]]+\]/g)
 			};
@@ -171,11 +168,11 @@ let jsKit = (function () {
 				return null;
 			}
 
-			element = document.createElement(matches.tag);
+			const element = document.createElement(matches.tag);
 
 			if (matches.attributes) {
 				matches.attributes.forEach(function (el) {
-					let parts = el.slice(1, -1).split('='); // remove brackets, split key/value
+					const parts = el.slice(1, -1).split('='); // remove brackets, split key/value
 					element.setAttribute(parts.shift(), parts.join('='));
 					str = str.replace(el, ''); // remove the current attribute in the string so we can savely extract the id and classes
 				});
@@ -199,7 +196,7 @@ let jsKit = (function () {
 			return element;
 		},
 		'delegate': (function () {
-			let listeners = {};
+			const listeners = {};
 
 			return function (eventType, selector, callback) {
 				if (listeners[eventType] === undefined) {
@@ -207,14 +204,13 @@ let jsKit = (function () {
 
 					document.documentElement.addEventListener(eventType, function (e) {
 						let currentElement = e.target;
-						let selector;
 
 						bubblingLoop:
-						while (currentElement && currentElement !== document) {
-							for (selector in listeners[eventType]) {
-								if (_js.matchesSelector(currentElement, selector)) {
-									listeners[eventType][selector].forEach(function (el) {
-										el.call(currentElement, e);
+						while (currentElement && currentElement !== document) { // loop through all ancestors
+							for (const sel in listeners[eventType]) { // loop through all registered selectors
+								if (_js.matchesSelector(currentElement, sel)) { // check if any of the registered selectors matches the current Element
+									listeners[eventType][sel].forEach(function (el) {
+										el.call(currentElement, e); // if so, call the event handler function
 									});
 
 									break bubblingLoop;
@@ -227,15 +223,15 @@ let jsKit = (function () {
 				}
 
 				// if needed create a new array for the callbacks for the selector and push the callback function into it
-				(typeof callback === 'function') && (listeners[eventType][selector] = listeners[eventType][selector] || []).push(callback);
+				if (typeof callback === 'function') {
+					(listeners[eventType][selector] = listeners[eventType][selector] || []).push(callback);
+				}
 			};
 		})(),
 		'equals': function (obj1, obj2) {
 			function compare(a, b) {
-				let prop, i, iLen;
-
 				if (_js.isObject(a) && _js.isObject(b)) { // two objects
-					for (prop in a) {
+					for (const prop in a) {
 						if (typeof a[prop] === 'object' && typeof b[prop] === 'object') {
 							if (!compare(a[prop], b[prop])) { // a difference was found, stop comparing
 								return false;
@@ -250,7 +246,7 @@ let jsKit = (function () {
 				}
 				else if (_js.isArray(a) && _js.isArray(b)) { // two arrays
 					if (a.length === b.length) {
-						for (i = 0, iLen = a.length; i < iLen; i++) {
+						for (let i = 0, iLen = a.length; i < iLen; i++) {
 							if (typeof a[i] === 'object' && typeof b[i] === 'object') { // objects or arrays
 								if (!compare(a[i], b[i])) { // a difference was found, stop comparing
 									return false;
@@ -315,26 +311,24 @@ let jsKit = (function () {
 			return compare;
 		})(),
 		'extract': function (str, selector) {
-			let div = document.createElement('div');
+			const div = document.createElement('div');
 			div.innerHTML = str;
 			return div.querySelector(selector).innerHTML;
 		},
 		'extractBodyContent': function (myString) {
-			let s1, s2, s3;
-
 			if (/<body/.test(myString) && /<\/body>/.test(myString)) {
-				s1 = myString.split('<body')[1];
-				s2 = s1.split('>');
+				const s1 = myString.split('<body')[1];
+				const s2 = s1.split('>');
 				s2.shift(); // delete first item
-				s3 = s2.join('>').split('</body>')[0].trim();
-				return s3;
+				return s2.join('>').split('</body>')[0].trim();
 			}
+
+			return null;
 		},
 		'flatten': function (arr) {
-			let data = [];
-			let i, iLen;
+			const data = [];
 
-			for (i = 0, iLen = arr.length; i < iLen; i++) {
+			for (let i = 0, iLen = arr.length; i < iLen; i++) {
 				if (_js.isArray(arr[i])) {
 					data = data.concat(_js.flatten(arr[i])); // recursive call to flat down infinite multidimensional array-layers
 				}
@@ -346,7 +340,7 @@ let jsKit = (function () {
 			return data;
 		},
 		'getAudio': function (mpegSrc, oggSrc) {
-			let audio = document.createElement('audio');
+			const audio = document.createElement('audio');
 			let content = '<source src="' + mpegSrc + '" type="audio/mpeg">'
 
 			if (typeof oggSrc === 'string') {
@@ -360,7 +354,7 @@ let jsKit = (function () {
 			return new Date(year, month + 1, 0).getDate();
 		},
 		'getFormElements': function (container) {
-			let elements = {
+			const elements = {
 				inputs: _js.toArray(container.getElementsByTagName('input')),
 				selects: _js.toArray(container.getElementsByTagName('select')),
 				textareas: _js.toArray(container.getElementsByTagName('textarea'))
@@ -368,14 +362,14 @@ let jsKit = (function () {
 
 			return elements.inputs.concat(elements.selects, elements.textareas);
 		},
-		'getId': (function () {
-			let ids = [];
+		'createId': (function () {
+			const ids = new Set();
+			const defaultCharset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIKLMNOPQRSTUVWXYZ0123456789'.split('');
 
 			function generate(len, charset) {
 				let id = '';
-				let i;
 
-				for (i = 0; i < len; i++) {
+				for (let i = 0; i < len; i++) {
 					id += charset[Math.floor(Math.random() * charset.length)]
 				}
 
@@ -383,26 +377,26 @@ let jsKit = (function () {
 			}
 
 			return function (len, charset) {
-				let id;
-
 				len = len || 20;
 
 				if (!_js.isArray(charset)) {
-					charset = (charset || 'abcdefghijklmnopqrstuvwxyzABCDEFGHIKLMNOPQRSTUVWXYZ0123456789').split('');
+					charset = (charset ? charset.split('') : defaultCharset);
 				}
+
+				let id;
 
 				do {
 					id = generate(len, charset);
 				}
-				while (ids.indexOf(id) > -1);
+				while (ids.has(id));
 
-				ids.push(id);
+				ids.add(id);
 				return id;
 			}
 		})(),
-		'getGuid': (function () {
-			let guids = [];
-			let pattern = 'xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx'; // the 4 stands for the GUID-version (random)
+		'createGuid': (function () {
+			const guids = new Set();
+			const pattern = 'xxxxxxxx-xxxx-4xxx-xxxx-xxxxxxxxxxxx'; // the 4 stands for the GUID-version (random)
 
 			function generate() {
 				return pattern.replace(/x/g, function () {
@@ -416,9 +410,9 @@ let jsKit = (function () {
 				do {
 					guid = generate();
 				}
-				while (guids.indexOf(guid) > -1); // avoid double guids (although it is almost impossible)
+				while (guids.has(guid)); // avoid double guids (although it is almost impossible)
 
-				guids.push(guid);
+				guids.add(guid);
 				return guid;
 			}
 		})(),
@@ -435,9 +429,9 @@ let jsKit = (function () {
 			}
 
 			if (hex.length == 6) {
-				let r = parseInt(hex.substr(0, 2), 16);
-				let g = parseInt(hex.substr(2, 2), 16);
-				let b = parseInt(hex.substr(4, 2), 16);
+				const r = parseInt(hex.substr(0, 2), 16);
+				const g = parseInt(hex.substr(2, 2), 16);
+				const b = parseInt(hex.substr(4, 2), 16);
 				return r + ', ' + g + ', ' + b;
 			}
 		},
@@ -457,8 +451,6 @@ let jsKit = (function () {
 			return string.substring(0, index) + (add || '') + string.substring(index + deleteLength);
 		},
 		'invertColor': function (color) {
-			let values;
-
 			if (color.charAt(0) === '#') {
 				color = color.slice(1);
 			}
@@ -467,7 +459,7 @@ let jsKit = (function () {
 				color = color.charAt(0) + color.charAt(0) + color.charAt(1) + color.charAt(1) + color.charAt(2) + color.charAt(2);
 			}
 
-			values = {
+			const values = {
 				r: _js.pad((255 - parseInt(color.substr(0, 2), 16)).toString(16)),
 				g: _js.pad((255 - parseInt(color.substr(2, 2), 16)).toString(16)),
 				b: _js.pad((255 - parseInt(color.substr(4, 2), 16)).toString(16))
@@ -481,12 +473,12 @@ let jsKit = (function () {
 		'isInt': function (num) {
 			return parseInt(num) === num;
 		},
-		'touchedViewport': function (el) { // check if an element is partly in the viewport
-			let rect = el.getBoundingClientRect();
+		'touchesViewport': function (el) { // check if an element is partly in the viewport
+			const rect = el.getBoundingClientRect();
 			return (rect.top <= window.innerHeight && rect.bottom >= 0 && rect.left <= window.innerWidth && rect.right >= 0);
 		},
 		'insideViewport': function (el) { // check if an element is completly in the viewport
-			let rect = el.getBoundingClientRect();
+			const rect = el.getBoundingClientRect();
 			return (rect.top >= 0 && rect.bottom <= window.innerHeight && rect.left >= 0 && rect.right <= window.innerWidth);
 		},
 		'isMac': navigator.platform.toLowerCase().indexOf('mac') > -1,
@@ -497,25 +489,14 @@ let jsKit = (function () {
 			});
 		},
 		'matchesSelector': function (element, selector) {
-			let p = Element.prototype;
+			const p = Element.prototype;
 
 			return (p.matches || p.webkitMatchesSelector || p.mozMatchesSelector || p.msMatchesSelector || p.oMatchesSelector || function (s) {
-				let matches = document.querySelectorAll(s);
-				let i, iLen;
-
-				for (i = 0, iLen = matches.length; i < iLen; i++) {
-					if (matches[i] === this) {
-						return true;
-					}
-				}
-
-				return false;
+				return _js.select(s).some(el => el === this);
 			}).call(element, selector);
 		},
 		'numToText': function (num) {
 			let numString = '';
-			let numerals, rests, currentLength, currentPart;
-
 			num = parseInt(num);
 
 			if (isNaN(num)) {
@@ -529,7 +510,7 @@ let jsKit = (function () {
 
 			num = num.toString();
 
-			numerals = {
+			const numerals = {
 				0: 'zero',
 				1: 'one',
 				2: 'two',
@@ -560,7 +541,7 @@ let jsKit = (function () {
 				90: 'ninety',
 			};
 
-			rests = {
+			const rests = {
 				3: 'thousand',
 				6: 'million',
 				9: 'billion',
@@ -613,8 +594,8 @@ let jsKit = (function () {
 			}
 			else {
 				while (num.length > 0) {
-					currentLength = (num.length % 3) || 3;
-					currentPart = num.substr(0, currentLength);
+					const currentLength = (num.length % 3) || 3;
+					const currentPart = num.substr(0, currentLength);
 					numString += getNumPart(currentPart);
 
 					num = num.substring(currentLength);
@@ -645,8 +626,8 @@ let jsKit = (function () {
 			return subj;
 		},
 		'parseHTML': function (html) {
-			let template = document.createElement('template');
-			let fragment, container;
+			const template = document.createElement('template');
+			let fragment;
 
 			if ('content' in template) {
 				template.innerHTML = html;
@@ -657,7 +638,7 @@ let jsKit = (function () {
 			}
 			else {
 				fragment = document.createDocumentFragment();
-				container = document.createElement('div');
+				const container = document.createElement('div');
 				container.innerHTML = html;
 
 				while (container.firstChild) {
@@ -668,7 +649,7 @@ let jsKit = (function () {
 			return fragment;
 		},
 		'preloadImage': function (src, onload) {
-			let img = document.createElement('img');
+			const img = document.createElement('img');
 
 			if (typeof onload === 'function') {
 				img.onload = function (e) {
@@ -712,20 +693,16 @@ let jsKit = (function () {
 			}
 		},
 		'removeClassByClassName': function (className, container) {
-			let elements;
-
 			container = container || document;
-			elements = container.getElementsByClassName(className);
+			const elements = container.getElementsByClassName(className);
 
 			while (elements.length > 0) {
 				elements[elements.length - 1].classList.remove(className);
 			}
 		},
 		'removeElements': function (selector, container) {
-			let elements;
-
 			container = container || document;
-			elements = container.querySelectorAll(selector);
+			const elements = container.querySelectorAll(selector);
 
 			while (elements.length > 0) {
 				elements[elements.length - 1].outerHTML = '';
@@ -740,11 +717,10 @@ let jsKit = (function () {
 			return null;
 		},
 		'repeat': function (times, fn, args) {
-			let iLen = +times;
-			let i;
+			const iLen = +times;
 
-			if (typeof fn === 'function') {
-				for (i = 0; i < iLen; i++) {
+			if (typeof fn === 'function' && !isNaN(iLen)) {
+				for (let i = 0; i < iLen; i++) {
 					fn(i, args);
 				}
 			}
@@ -768,8 +744,8 @@ let jsKit = (function () {
 		},
 		'serialize': function (container) {
 			// for POST you can use 'new FormData(form)'
-			let data = [];
-			let elements, i, iLen, element, name, j, jLen;
+			const data = [];
+			let elements;
 
 			if (container.tagName == 'FORM') {
 				elements = container.elements;
@@ -779,12 +755,12 @@ let jsKit = (function () {
 			}
 
 			// loop over all form data-elements
-			for (i = 0, iLen = elements.length; i < iLen; i++) {
-				element = elements[i];
+			for (let i = 0, iLen = elements.length; i < iLen; i++) {
+				const element = elements[i];
 
 				// if not disabled and name attribute is not empty
 				if (!element.hasAttribute('disabled') && element.hasAttribute('name') && element.name.trim() != '') {
-					name = element.name.trim();
+					const name = element.name.trim();
 
 					switch (element.tagName) {
 						case 'INPUT':
@@ -805,7 +781,7 @@ let jsKit = (function () {
 									data.push(name + '=' + encodeURIComponent(element.value));
 									break;
 								case 'select-multiple':
-									for (j = 0, jLen = element.options.length; j < jLen; j++) {
+									for (let j = 0, jLen = element.options.length; j < jLen; j++) {
 										if (element.options[j].selected) {
 											data.push(name + '=' + encodeURIComponent(element.options[j].value));
 										}
@@ -879,9 +855,9 @@ let jsKit = (function () {
 			return Object.prototype.toString.call(subj).split(' ')[1].slice(0, -1).toLowerCase();
 		},
 		'parseURL': function (url, parseSearch) {
-			let a = document.createElement('a');
-			let props = ['hash', 'host', 'hostname', 'href', 'origin', 'password', 'pathname', 'port', 'protocol', 'search', 'username'];
-			let result = {};
+			const a = document.createElement('a');
+			const props = ['hash', 'host', 'hostname', 'href', 'origin', 'password', 'pathname', 'port', 'protocol', 'search', 'username'];
+			const result = {};
 
 			a.href = (typeof url === 'string') ? url : '';
 
@@ -890,10 +866,7 @@ let jsKit = (function () {
 			});
 
 			if (parseSearch && a.search) {
-				let search = a.search;
-
-				search = search.slice(1);
-
+				const search = a.search.slice(1);
 				const parsedSearchResult = {};
 				const keyVals = search.split('&');
 
@@ -921,7 +894,7 @@ let jsKit = (function () {
 			return result;
 		},
 		'HTMLEntityDecode': function (text) {
-			let textarea = document.createElement('textarea');
+			const textarea = document.createElement('textarea');
 			textarea.innerHTML = text;
 			return textarea.value;
 		},
@@ -933,16 +906,14 @@ let jsKit = (function () {
 			return text;
 		},
 		'bindData': (function () { // bind data in key-value-pairs to some object
-			let keys = [], values = [];
+			const keys = [], values = [];
 
 			return function (target, key, value) {
-				let vals;
-				let match = keys.indexOf(target);
-				let prop;
+				const match = keys.indexOf(target);
 
 				if (arguments.length === 3) { // write
 					if (match === -1) {
-						vals = {};
+						const vals = {};
 						vals[key] = value;
 						keys.push(target);
 						values.push(vals);
@@ -953,7 +924,7 @@ let jsKit = (function () {
 				}
 				else if (arguments.length === 2) {
 					if (_js.isObject(key)) { // assign object properties
-						for (prop in key) {
+						for (const prop in key) {
 							if (key.hasOwnProperty(prop)) {
 								_js.bindData(target, prop, key[prop]);
 							}
@@ -966,13 +937,11 @@ let jsKit = (function () {
 			};
 		})(),
 		'containsOnly': function (subj, val) {
-			let i, iLen;
-
 			if (typeof subj === 'string') {
 				subj = subj.split('');
 			}
 
-			for (i = 0, iLen = subj.length; i < iLen; i++) {
+			for (let i = 0, iLen = subj.length; i < iLen; i++) {
 				if (subj[i] !== (val || subj[0])) {
 					return false;
 				}
@@ -980,8 +949,8 @@ let jsKit = (function () {
 			return true;
 		},
 		'getGETParameter': function (p) {
+			const params = {};
 			let search = location.search;
-			let params = {};
 
 			if (search) {
 				search = search.slice(1).split('&');
@@ -995,19 +964,17 @@ let jsKit = (function () {
 			return (p === undefined) ? params : params[p];
 		},
 		'isPrimeNumber': function (number) {
-			let i;
-
-			if (number % 1 === 0) {
-				for (i = 2; i < number; i++) {
-					if ((number / i) % 1 === 0) {
-						return false;
-					}
-				}
-
-				return number > 1;
+			if (number < 2 || number % 1 !== 0) { // filter out too small numbers and decimal numbers
+				return false; 
 			}
 
-			return false;
+			for (let i = 2; i < number; i++) { // loop up to the target number
+				if ((number / i) % 1 === 0) { // check if the number is divisible by any other smaller number
+					return false; // if so, the number is not a prime number since prime numbers are only divisible by 1 and the number itself
+				}
+			}
+
+			return true;
 		},
 		'removeChilds': function (element) {
 			let counter = 0;
@@ -1031,7 +998,7 @@ let jsKit = (function () {
 		},
 		'supportsCSS': (function () {
 			return CSS.supports || function (prop, val) {
-				let div = document.createElement('div');
+				const div = document.createElement('div');
 
 				if (prop !== undefined && prop in div.style) {
 					div.style[prop] = val;
@@ -1045,13 +1012,11 @@ let jsKit = (function () {
 			return !a !== !b;
 		},
 		'countCharacters': function (input) {
-			let chars = {};
-			let i, iLen, currentChar;
-
+			const chars = {};
 			input += '';
 
-			for (i = 0, iLen = input.length; i < iLen; i++) {
-				currentChar = input.charAt(i);
+			for (let i = 0, iLen = input.length; i < iLen; i++) {
+				const currentChar = input.charAt(i);
 				chars[currentChar] = chars[currentChar] ? ++chars[currentChar] : 1;
 			}
 
@@ -1062,7 +1027,7 @@ let jsKit = (function () {
 		},
 		'shuffle': function (a) {
 			// if a single array is given, use that, otherwise use the arguments object
-			let arr = (Array.isArray(a) && arguments.length === 1) ? a : _js.toArray(arguments);
+			const arr = (Array.isArray(a) && arguments.length === 1) ? a : _js.toArray(arguments);
 
 			for (let i = arr.length - 1; i > 0; i--) {
 				const j = Math.floor(Math.random() * (i + 1));
@@ -1075,8 +1040,7 @@ let jsKit = (function () {
 		/* ##################### TESTING AREA ##################### */
 		'include': function (attr) {
 			attr = attr || 'data-include';
-			let elements = document.querySelectorAll('[' + attr + ']');
-			let i, iLen;
+			const elements = document.querySelectorAll('[' + attr + ']');
 
 			function insertResponse(el) {
 				_js.ajax.get(el.getAttribute(attr), function (req) {
@@ -1084,36 +1048,32 @@ let jsKit = (function () {
 				});
 			}
 
-			for (i = 0, iLen = elements.length; i < iLen; i++) {
+			for (let i = 0, iLen = elements.length; i < iLen; i++) {
 				insertResponse(elements[i]);
 				// elements[i].removeAttribute(attr);
 			}
 		},
 		'forEach': function (subj, fn, args) {
-			let i = 0;
-			let iLen = subj.length;
-			let prop;
-
 			if (_js.isArray(subj) || _js.isHTMLCollection(subj) || _js.isNodeList(subj)) {
-				for (; i < iLen; i++) {
+				for (let i = 0, iLen = subj.length; i < iLen; i++) {
 					fn.apply(subj, [subj[i], i, subj].concat(args || []));
 				}
 			}
 			else if (_js.isObject(subj)) {
-				for (prop in subj) {
+				for (const prop in subj) {
 					if (subj.hasOwnProperty(prop)) {
 						fn.apply(subj, [subj[prop], i++, subj].concat(args || []));
 					}
 				}
 			}
 			else if (_js.isString(subj)) {
-				for (; i < iLen; i++) {
+				for (let i = 0, iLen = subj.length; i < iLen; i++) {
 					fn.apply(subj, [subj.charAt(i), i, subj].concat(args || []));
 				}
 			}
 		},
 		'loadScript': function (url, callback) {
-			let script = document.createElement('script');
+			const script = document.createElement('script');
 
 			if (typeof callback === 'function') {
 				script.addEventListener('onload', callback, false);
@@ -1124,11 +1084,11 @@ let jsKit = (function () {
 			document.body.appendChild(script); // start loading (in opposite to media elements scripts need to be added to the DOM)
 		},
 		'scroll': function (a, callback) {
-			let y, el, dir, step;
+			let y, dir;
 
 			function scrollStep() {
 				if (window.scrollY !== y) {
-					step = dir * (Math.ceil(Math.abs((window.scrollY - y) / 8))); // round up to always scroll at least 1 pixel
+					const step = dir * (Math.ceil(Math.abs((window.scrollY - y) / 8))); // round up to always scroll at least 1 pixel
 
 					scrollBy(0, step);
 					requestAnimationFrame(scrollStep);
@@ -1142,7 +1102,7 @@ let jsKit = (function () {
 				y = a;
 			}
 			else if (_js.isString(a)) {
-				el = document.querySelector(a);
+				const el = document.querySelector(a);
 
 				if (el) {
 					y = el.offsetTop;
@@ -1156,8 +1116,8 @@ let jsKit = (function () {
 			}
 		},
 		'onAppear': (function () {
+			const elements = [];
 			let setListener = false;
-			let elements = [];
 
 			return function (element, callback) {
 				if (!setListener) {
@@ -1187,7 +1147,7 @@ let jsKit = (function () {
 		'promise': function (callback) {
 			let value, resolveHandler, rejectHandler, returnedResolve, returnedReject;
 			let state = 'pending';
-			let promiseProto = {
+			const promiseProto = {
 				then: function (onRes, onRej) {
 					let newPromise = _js.promise(function (resolve, reject) {
 						returnedResolve = resolve;
@@ -1251,7 +1211,8 @@ let jsKit = (function () {
 					return newPromise;
 				}
 			};
-			let promise = Object.create(promiseProto);
+
+			const promise = Object.create(promiseProto);
 
 			function resolve(msg) { // may be called async
 				if (state === 'pending') {
@@ -1307,7 +1268,7 @@ let jsKit = (function () {
 			return promise;
 		},
 		'observeProperty': function (obj, prop, onchange) {
-			let value = obj[prop];
+			const value = obj[prop];
 
 			if (delete obj[prop] && typeof onchange === 'function') {
 				Object.defineProperty(obj, prop, {
@@ -1323,43 +1284,43 @@ let jsKit = (function () {
 			}
 		},
 		'params': function (input) {
-			let rv, parts, position, key
+			let result;
 
 			if (typeof input === 'string') {
-				position = input.indexOf('?');
+				const position = input.indexOf('?');
 
 				if (position !== -1) {
 					input = input.slice(position);
 				}
 
-				parts = input.split('&');
-				rv = {};
+				const parts = input.split('&');
+				result = {};
 
 				parts.forEach(function (part) {
 					let keyValue = part.split('=');
-					rv[keyValue[0]] = keyValue[1];
+					result[keyValue[0]] = keyValue[1];
 				});
 			}
 			else if (_js.isArray(input)) {
-				rv = input.join('&');
+				result = input.join('&');
 			}
 			else if (typeof input === 'object') {
-				rv = '';
+				result = '';
 
-				for (key in input) {
-					if (rv) {
-						rv += '&';
+				for (const key in input) {
+					if (result) {
+						result += '&';
 					}
 
-					rv += key + '=' + input[key];
+					result += key + '=' + input[key];
 				}
 			}
 
-			return rv;
+			return result;
 		},
 		'jsonp': function (url, callback, paramName) {
-			let script = document.createElement('script');
-			let callbackName = 'jsKit_' + Math.floor(Math.random() * 1e12) + Math.floor(Math.random() * 1e12);
+			const script = document.createElement('script');
+			const callbackName = 'jsKit_' + Math.floor(Math.random() * 1e12) + Math.floor(Math.random() * 1e12);
 
 			if (typeof callback === 'function') {
 				window[callbackName] = callback;
@@ -1374,7 +1335,7 @@ let jsKit = (function () {
 			}
 		},
 		'deferred': function () {
-			let def = {};
+			const def = {};
 
 			def.promise = _js.promise(function (resolve, reject) {
 				def.resolve = resolve;
@@ -1384,15 +1345,13 @@ let jsKit = (function () {
 			return def;
 		},
 		'getObjectKeyPathes': function (obj) {
-			let result = {};
+			const result = {};
 
 			function nextLevel(startWith, o) {
-				let i, iLen, prop, currentPath;
-
 				if (_js.isArray(o)) {
-					for (i = 0, iLen = o.length; i < iLen; i++) {
+					for (let i = 0, iLen = o.length; i < iLen; i++) {
 						if (startWith.length) {
-							currentPath = startWith + '[' + i + ']';
+							const currentPath = startWith + '[' + i + ']';
 
 							if (currentPath in result) { // avoid infinite recursive objects
 								return result;
@@ -1414,10 +1373,10 @@ let jsKit = (function () {
 					}
 				}
 				else if (typeof o === 'object') {
-					for (prop in o) {
+					for (const prop in o) {
 						if (o.hasOwnProperty(prop)) {
 							if (startWith.length) {
-								currentPath = startWith + '.' + prop
+								const currentPath = startWith + '.' + prop
 
 								if (currentPath in result) { // avoid infinite recursive objects
 									return result;
@@ -1461,32 +1420,31 @@ let jsKit = (function () {
 			});
 		},
 		'curry': function (fn) {
-			let that = this;
-			let args = [];
+			const _this = this;
+			const args = [];
 
 			if (typeof fn === 'function') {
 				return function currying() {
 					Array.prototype.push.apply(args, arguments);
-					return (args.length >= fn.length) ? fn.apply(that, args) : currying; // if we have enough args, call the function else wait for more params
+					return (args.length >= fn.length) ? fn.apply(_this, args) : currying; // if we have enough args, call the function else wait for more params
 				};
 			}
 		},
 		'inlineStylesheet': function (stylesheet) {
 			return new Promise(function (resolve, reject) {
-				let doc = document.cloneNode(true);
-				let currentCssRule, currentSelection;
-				let removeElements, xhr;
+				const doc = document.cloneNode(true);
 
 				function getDoctypeString(doctype) {
 					return '<!DOCTYPE ' + doctype.name + (doctype.publicId ? ' PUBLIC "' + doctype.publicId + '"' : '') + (!doctype.publicId && doctype.systemId ? ' SYSTEM' : '') + (doctype.systemId ? ' "' + doctype.systemId + '"' : '') + '>';
 				};
 
 				for (let i = 0, iLen = stylesheet.cssRules.length; i < iLen; i++) { // loop through cssRules
-					currentCssRule = stylesheet.cssRules[i];
+
+					const currentCssRule = stylesheet.cssRules[i];
 					//console.log(currentCssRule.toString(), currentCssRule);
 
 					if (currentCssRule.style) { // css rule
-						currentSelection = doc.querySelectorAll(currentCssRule.selectorText);
+						const currentSelection = doc.querySelectorAll(currentCssRule.selectorText);
 
 						for (let j = 0, jLen = currentCssRule.style.length; j < jLen; j++) { // loop through styles
 							for (let k = 0, kLen = currentSelection.length; k < kLen; k++) { // loop through element selection to apply styles
@@ -1497,7 +1455,7 @@ let jsKit = (function () {
 					else if (currentCssRule.conditionText) { // media query
 						if (matchMedia(currentCssRule.conditionText).matches) { // media query matches
 							for (let j = 0, jLen = currentCssRule.cssRules.length; j < jLen; j++) { // loop through css rules of media query
-								currentSelection = doc.querySelectorAll(currentCssRule.cssRules[j].selectorText);
+								const currentSelection = doc.querySelectorAll(currentCssRule.cssRules[j].selectorText);
 
 								for (let k = 0, kLen = currentCssRule.cssRules[j].style.length; k < kLen; k++) { // loop through styles of media query
 									for (let l = 0, lLen = currentSelection.length; l < lLen; l++) { // loop through element selection to apply styles
@@ -1512,17 +1470,16 @@ let jsKit = (function () {
 				// remove all style-, script- and link-elements
 
 				if (stylesheet.ownerNode && stylesheet.ownerNode.hasAttribute('href')) {
-					xhr = new XMLHttpRequest();
+					const xhr = new XMLHttpRequest();
 
 					xhr.onload = function () {
-						let style = document.createElement('style');
-						let output = getDoctypeString(document.doctype);
-						let removeElements;
+						const style = document.createElement('style');
+						const output = getDoctypeString(document.doctype);
 
 						style.innerHTML = xhr.responseText.replace(/\/\*[^]*?\*\//gm, '');
 						doc.head.appendChild(style);
 
-						removeElements = doc.querySelectorAll('link, style[href], script');
+						const removeElements = doc.querySelectorAll('link, style[href], script');
 
 						for (let i = 0, iLen = removeElements.length; i < iLen; i++) {
 							removeElements[i].parentNode.removeChild(removeElements[i]);
@@ -1547,16 +1504,15 @@ let jsKit = (function () {
 			});
 		},
 		'getNextDSTDate': function (startDate) { // get next date of Daylight Saving Time
-			let date = (startDate instanceof Date) ? startDate : new Date();
-			let max = 365;
-			let i, diff, currentDiff;
+			const date = (startDate instanceof Date) ? startDate : new Date();
+			const max = 365;
 
 			date.setHours(23, 59, 59);
-			diff = date.getTimezoneOffset();
+			const diff = date.getTimezoneOffset();
 
-			for (i = 0; i < max; i++) {
+			for (let i = 0; i < max; i++) {
 				date.setDate(date.getDate() + 1);
-				currentDiff = date.getTimezoneOffset()
+				const currentDiff = date.getTimezoneOffset()
 
 				if (currentDiff !== diff) {
 					date.setHours(0, 0, 0, 0);
@@ -1572,21 +1528,20 @@ let jsKit = (function () {
 		},
 		'Observable': (function () {
 			function Observable(callback, initVal) {
-				let that = this;
-				let value;
+				const _this = this;
 
 				if (typeof callback === 'function') {
-					that.observers = [];
-					value = initVal;
+					_this.observers = [];
+					let value = initVal;
 
-					callback.call(that, function (newVal) { // setter
+					callback.call(_this, function (newVal) { // setter
 						let oldVal;
 
 						if (newVal !== value) {
 							oldVal = value;
 							value = newVal;
 
-							that.observers.forEach(observer => {
+							_this.observers.forEach(observer => {
 								observer(value, oldVal);
 							});
 						}
@@ -1600,34 +1555,33 @@ let jsKit = (function () {
 			}
 
 			Observable.prototype.subscribe = function (observer) {
-				let that = this;
+				let _this = this;
 
 				if (typeof observer === 'function') {
-					that.observers.push(observer);
-					return that.unsubscribe.bind(that, observer);
+					_this.observers.push(observer);
+					return _this.unsubscribe.bind(_this, observer);
 				}
 
 				return null;
 			};
 
 			Observable.prototype.unsubscribe = function (observer) {
-				let i = this.observers.indexOf(observer);
+				const i = this.observers.indexOf(observer);
 				return i > -1 ? this.observers.splice(i, 1)[0] : null;
 			};
 
 			return Observable;
 		})(),
 		'random': function () { // this method should return a more random number by using `window.crypto` than the usual `Math.random`
-			let length, source, numbers;
-			let random = Math.random();
+			const random = Math.random();
 
 			if (!crypto || !random) { // if random is zero, return it to avoid problems in following logic
 				return random;
 			}
 
-			length = random.toString().split('.').pop().length;
-			source = crypto.getRandomValues(new Uint16Array(length));
-			numbers = _js.toArray(source).map(function (rand) {
+			const length = random.toString().split('.').pop().length;
+			const source = crypto.getRandomValues(new Uint16Array(length));
+			const numbers = _js.toArray(source).map(function (rand) {
 				return rand.toString().split('').map(Number).reduce(function (acc, el) {
 					return acc + el; // calculate digit sum
 				}, 0);
