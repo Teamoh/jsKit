@@ -1,5 +1,5 @@
 /*	
-*	jsKit - A Handy Survival-Kit for JavaScript Developers
+*	jsKit - A handy collection of useful JavaScript methods
 */
 var jsKit = (function () {
 	'use strict';
