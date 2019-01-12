@@ -1037,6 +1037,10 @@ var jsKit = (function () {
 
 			return arr;
 		},
+		byteCount: function (s) {
+			// returns the amount of bytes of a string by using encodeURI which encodes special characters to the format '%0F'
+			return encodeURI(s).split(/%..|./).length - 1;
+		},
 		/* ##################### TESTING AREA ##################### */
 		include: function (attr) {
 			attr = attr || 'data-include';
