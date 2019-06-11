@@ -1161,7 +1161,7 @@ var jsKit = (function () {
 					if (typeof onRes === 'function') {
 						resolveHandler = onRes;
 
-						if (state === 'fulfilled') {
+						if (state === 'fulfilled' || state === 'pending') {
 							try {
 								value = resolveHandler(value);
 								returnedResolve(value);
@@ -1209,6 +1209,9 @@ var jsKit = (function () {
 							catch (err) {
 								returnedReject(err);
 							}
+						}
+						else {
+							returnedResolve(value);
 						}
 					}
 
