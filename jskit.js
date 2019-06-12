@@ -98,7 +98,7 @@ var jsKit = (function () {
 					pos = text.indexOf(seperator);
 				}
 			}
-	
+
 			return text;
 		},
 		class: function (className, context) {
@@ -965,7 +965,7 @@ var jsKit = (function () {
 		},
 		isPrimeNumber: function (number) {
 			if (number < 2 || number % 1 !== 0) { // filter out too small numbers and decimal numbers
-				return false; 
+				return false;
 			}
 
 			for (let i = 2; i < number; i++) { // loop up to the target number
@@ -1161,7 +1161,7 @@ var jsKit = (function () {
 					if (typeof onRes === 'function') {
 						resolveHandler = onRes;
 
-						if (state === 'fulfilled' || state === 'pending') {
+						if (state === 'fulfilled') {
 							try {
 								value = resolveHandler(value);
 								returnedResolve(value);
@@ -1188,6 +1188,9 @@ var jsKit = (function () {
 								returnedReject(err);
 							}
 						}
+						else if (state === 'fulfilled') {
+							returnedResolve(value);
+						}
 					}
 
 					return newPromise;
@@ -1201,7 +1204,7 @@ var jsKit = (function () {
 					if (typeof onRej === 'function') {
 						rejectHandler = onRej;
 
-						if (state === 'rejected') {
+						if (state === 'rejected') { // if promises state is rejected, execute the reject handler to handle the error
 							try {
 								value = rejectHandler(value);
 								returnedResolve(value);
@@ -1210,7 +1213,7 @@ var jsKit = (function () {
 								returnedReject(err);
 							}
 						}
-						else {
+						else if (state === 'fulfilled') {
 							returnedResolve(value);
 						}
 					}
