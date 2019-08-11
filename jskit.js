@@ -10,7 +10,7 @@ var jsKit = (function () {
 			'days': ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
 			'monthes': ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
 		},
-		addBrowserPrefixes: function (element, property, value) {
+		addBrowserPrefixes(element, property, value) {
 			element.style['-webkit-' + property] = value;
 			element.style['-moz-' + property] = value;
 			element.style['-ms-' + property] = value;
@@ -18,10 +18,10 @@ var jsKit = (function () {
 			element.style[property] = value;
 		},
 		ajax: {
-			check: function () {
+			check() {
 				return typeof XMLHttpRequest !== 'undefined';
 			},
-			get: function (url, onsuccess) {
+			get(url, onsuccess) {
 				if (_js.ajax.check()) {
 					const req = new XMLHttpRequest();
 
@@ -40,7 +40,7 @@ var jsKit = (function () {
 					document.createElement('img').src = url;
 				}
 			},
-			post: function (url, data, onsuccess, requestHeader) {
+			post(url, data, onsuccess, requestHeader) {
 				if (_js.ajax.check()) {
 					const req = new XMLHttpRequest();
 
@@ -79,13 +79,13 @@ var jsKit = (function () {
 				}
 			}
 		},
-		bind: function (fn, _this) {
+		bind(fn, _this) {
 			// this is a closure!!! the returned function still has access to the outer lets
 			return function () {
 				return fn.apply(_this, arguments);
 			};
 		},
-		camelCase: function (text, seperator) {
+		camelCase(text, seperator) {
 			if (seperator) {
 				let pos = text.indexOf(seperator);
 
@@ -101,12 +101,12 @@ var jsKit = (function () {
 
 			return text;
 		},
-		class: function (className, context) {
+		class(className, context) {
 			context = context || document;
 			return context.getElementsByClassName(className);
 		},
 		cookies: {
-			set: function (name, value, expires, path) {
+			set(name, value, expires, path) {
 				let cookieString = name + '=' + value;
 
 				if (expires !== undefined) {
@@ -129,7 +129,7 @@ var jsKit = (function () {
 
 				document.cookie = cookieString;
 			},
-			get: function (name) {
+			get(name) {
 				const cookies = '; ' + document.cookie;
 				const parts = cookies.split('; ' + name + '=');
 
@@ -139,7 +139,7 @@ var jsKit = (function () {
 
 				return null;
 			},
-			getAll: function () {
+			getAll() {
 				const result = {};
 				const cookies = document.cookie.split('; ');
 
@@ -152,11 +152,11 @@ var jsKit = (function () {
 
 				return result;
 			},
-			delete: function (name) {
+			delete(name) {
 				document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
 			}
 		},
-		createElement: function (str) {
+		createElement(str) {
 			str = str.trim();
 
 			const matches = {
@@ -228,7 +228,7 @@ var jsKit = (function () {
 				}
 			};
 		})(),
-		equals: function (obj1, obj2) {
+		equals(obj1, obj2) {
 			function compare(a, b) {
 				if (_js.isObject(a) && _js.isObject(b)) { // two objects
 					for (const prop in a) {
@@ -310,12 +310,12 @@ var jsKit = (function () {
 
 			return compare;
 		})(),
-		extract: function (str, selector) {
+		extract(str, selector) {
 			const div = document.createElement('div');
 			div.innerHTML = str;
 			return div.querySelector(selector).innerHTML;
 		},
-		extractBodyContent: function (myString) {
+		extractBodyContent(myString) {
 			if (/<body/.test(myString) && /<\/body>/.test(myString)) {
 				const s1 = myString.split('<body')[1];
 				const s2 = s1.split('>');
@@ -325,7 +325,7 @@ var jsKit = (function () {
 
 			return null;
 		},
-		flatten: function (arr) {
+		flatten(arr) {
 			const data = [];
 
 			for (let i = 0, iLen = arr.length; i < iLen; i++) {
@@ -339,7 +339,7 @@ var jsKit = (function () {
 
 			return data;
 		},
-		getAudio: function (mpegSrc, oggSrc) {
+		getAudio(mpegSrc, oggSrc) {
 			const audio = document.createElement('audio');
 			let content = '<source src="' + mpegSrc + '" type="audio/mpeg">'
 
@@ -350,10 +350,10 @@ var jsKit = (function () {
 			audio.innerHTML = content;
 			return audio;
 		},
-		getDaysInMonth: function (year, month) {
+		getDaysInMonth(year, month) {
 			return new Date(year, month + 1, 0).getDate();
 		},
-		getFormElements: function (container) {
+		getFormElements(container) {
 			const elements = {
 				inputs: _js.toArray(container.getElementsByTagName('input')),
 				selects: _js.toArray(container.getElementsByTagName('select')),
@@ -416,14 +416,14 @@ var jsKit = (function () {
 				return guid;
 			}
 		})(),
-		getRandomArrayValue: function (array) {
+		getRandomArrayValue(array) {
 			return array[Math.floor(Math.random() * array.length)];
 		},
-		getRandomColor: function () {
+		getRandomColor() {
 			// 256 * 256 * 256 == 16777216
 			return '#' + _js.pad(Math.floor(Math.random() * 16777216).toString(16), 6);
 		},
-		hexToRgb: function (hex) {
+		hexToRgb(hex) {
 			if (hex.charAt(0) === '#') {
 				hex = hex.substring(1);
 			}
@@ -435,10 +435,10 @@ var jsKit = (function () {
 				return r + ', ' + g + ', ' + b;
 			}
 		},
-		htmlspecialchars: function (str) {
+		htmlspecialchars(str) {
 			return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/'/g, '&quot;').replace(/'/g, '&#39;');
 		},
-		id: function (id, context) {
+		id(id, context) {
 			if (typeof context !== 'undefined' && typeof document.querySelector !== 'undefined') {
 				context = context || document;
 				return context.querySelector('#' + id);
@@ -447,10 +447,10 @@ var jsKit = (function () {
 				return document.getElementById(id);
 			}
 		},
-		insertToString: function (string, index, deleteLength, add) {
+		insertToString(string, index, deleteLength, add) {
 			return string.substring(0, index) + (add || '') + string.substring(index + deleteLength);
 		},
-		invertColor: function (color) {
+		invertColor(color) {
 			if (color.charAt(0) === '#') {
 				color = color.slice(1);
 			}
@@ -467,35 +467,35 @@ var jsKit = (function () {
 
 			return '#' + values.r + values.g + values.b;
 		},
-		isFloat: function (num) {
+		isFloat(num) {
 			return !isNaN(num) && (num - parseInt(num)) > 0;
 		},
-		isInt: function (num) {
+		isInt(num) {
 			return parseInt(num) === num;
 		},
-		touchesViewport: function (el) { // check if an element is partly in the viewport
+		touchesViewport(el) { // check if an element is partly in the viewport
 			const rect = el.getBoundingClientRect();
 			return (rect.top <= window.innerHeight && rect.bottom >= 0 && rect.left <= window.innerWidth && rect.right >= 0);
 		},
-		insideViewport: function (el) { // check if an element is completly in the viewport
+		insideViewport(el) { // check if an element is completly in the viewport
 			const rect = el.getBoundingClientRect();
 			return (rect.top >= 0 && rect.bottom <= window.innerHeight && rect.left >= 0 && rect.right <= window.innerWidth);
 		},
 		isMac: navigator.platform.toLowerCase().indexOf('mac') > -1,
 		isWindows: navigator.platform.toLowerCase().indexOf('win') > -1,
-		listen: function (eventType, selector, callback, capturing) {
+		listen(eventType, selector, callback, capturing) {
 			_js.select(selector).forEach(function (el) {
 				el.addEventListener(eventType, callback, !!capturing);
 			});
 		},
-		matchesSelector: function (element, selector) {
+		matchesSelector(element, selector) {
 			const p = Element.prototype;
 
 			return (p.matches || p.webkitMatchesSelector || p.mozMatchesSelector || p.msMatchesSelector || p.oMatchesSelector || function (s) {
 				return _js.select(s).some(el => el === this);
 			}).call(element, selector);
 		},
-		numToText: function (num) {
+		numToText(num) {
 			let numString = '';
 			num = parseInt(num);
 
@@ -614,7 +614,7 @@ var jsKit = (function () {
 				return numString.trim();
 			}
 		},
-		pad: function (subj, len, sym, fromRight) {
+		pad(subj, len, sym, fromRight) {
 			subj = subj.toString();
 			len = len || 2; // default is 2 so we can easily pad 1-9
 			sym = sym || '0';
@@ -625,7 +625,7 @@ var jsKit = (function () {
 
 			return subj;
 		},
-		parseHTML: function (html) {
+		parseHTML(html) {
 			const template = document.createElement('template');
 			let fragment;
 
@@ -648,7 +648,7 @@ var jsKit = (function () {
 
 			return fragment;
 		},
-		preloadImage: function (src, onload) {
+		preloadImage(src, onload) {
 			const img = document.createElement('img');
 
 			if (typeof onload === 'function') {
@@ -660,7 +660,7 @@ var jsKit = (function () {
 			img.src = src;
 			return img;
 		},
-		rand: function (min, max) {
+		rand(min, max) {
 			if (arguments.length == 2) {
 				if (min > max) {
 					max = [min, min = max][0]; // swap the two lets
@@ -681,7 +681,7 @@ var jsKit = (function () {
 				return Math.random();
 			}
 		},
-		ready: function (fn) {
+		ready(fn) {
 			// loading -> interactive (DOMContentLoaded) -> complete (load)
 			if (typeof fn === 'function') {
 				if (document.readyState === 'interactive' || document.readyState === 'complete') {
@@ -692,7 +692,7 @@ var jsKit = (function () {
 				}
 			}
 		},
-		removeClassByClassName: function (className, container) {
+		removeClassByClassName(className, container) {
 			container = container || document;
 			const elements = container.getElementsByClassName(className);
 
@@ -700,7 +700,7 @@ var jsKit = (function () {
 				elements[elements.length - 1].classList.remove(className);
 			}
 		},
-		removeElements: function (selector, container) {
+		removeElements(selector, container) {
 			container = container || document;
 			const elements = container.querySelectorAll(selector);
 
@@ -709,14 +709,14 @@ var jsKit = (function () {
 				elements = container.querySelectorAll(selector);
 			}
 		},
-		rgbToHex: function (r, g, b) {
+		rgbToHex(r, g, b) {
 			if (r < 256 && g < 256 && b < 256) {
 				return r.toString(16) + g.toString(16) + b.toString(16);
 			}
 
 			return null;
 		},
-		repeat: function (times, fn, args) {
+		repeat(times, fn, args) {
 			const iLen = +times;
 
 			if (typeof fn === 'function' && !isNaN(iLen)) {
@@ -725,7 +725,7 @@ var jsKit = (function () {
 				}
 			}
 		},
-		reverse: function (data) {
+		reverse(data) {
 			if (typeof data === 'string') {
 				return data.split('').reverse().join('');
 			}
@@ -733,7 +733,7 @@ var jsKit = (function () {
 				return data.reverse();
 			}
 		},
-		select: function (selector, context) {
+		select(selector, context) {
 			context = context || document;
 			return _js.toArray(context.querySelectorAll(selector));
 			/* 
@@ -742,7 +742,7 @@ var jsKit = (function () {
 			*	tag: /^[a-z]+$/i
 			*/
 		},
-		serialize: function (container) {
+		serialize(container) {
 			// for POST you can use 'new FormData(form)'
 			const data = [];
 			let elements;
@@ -798,63 +798,63 @@ var jsKit = (function () {
 
 			return data.join('&');
 		},
-		tag: function (tag, context) {
+		tag(tag, context) {
 			context = context || document;
 			return context.getElementsByTagName(tag);
 		},
-		toArray: function (data) {
+		toArray(data) {
 			return Array.prototype.slice.call(data, 0);
 		},
-		trigger: function (element, type, dataObj) {
+		trigger(element, type, dataObj) {
 			if (typeof dataObj === 'object')
 				element.dispatchEvent(new CustomEvent(type, dataObj));
 			else
 				element.dispatchEvent(new CustomEvent(type));
 		},
-		ucfirst: function (str) {
+		ucfirst(str) {
 			return str.charAt(0).toUpperCase() + str.slice(1);
 		},
-		uclast: function (str) {
+		uclast(str) {
 			// use slice here because it accepts negative parameters
 			return str.slice(0, -1) + str.slice(-1).toUpperCase();
 		},
 		isArray: Array.isArray || function (subj) {
 			return Object.prototype.toString.call(subj) === '[object Array]';
 		},
-		isBoolean: function (subj) {
+		isBoolean(subj) {
 			return Object.prototype.toString.call(subj) === '[object Boolean]';
 		},
-		isDate: function (subj) {
+		isDate(subj) {
 			return Object.prototype.toString.call(subj) === '[object Date]';
 		},
-		isFunction: function (subj) {
+		isFunction(subj) {
 			return Object.prototype.toString.call(subj) === '[object Function]';
 		},
-		isHTMLCollection: function (subj) {
+		isHTMLCollection(subj) {
 			return Object.prototype.toString.call(subj) === '[object HTMLCollection]';
 		},
-		isNodeList: function (subj) {
+		isNodeList(subj) {
 			return Object.prototype.toString.call(subj) === '[object NodeList]';
 		},
-		isNumber: function (subj) {
+		isNumber(subj) {
 			return Object.prototype.toString.call(subj) === '[object Number]';
 		},
-		isObject: function (subj) {
+		isObject(subj) {
 			return Object.prototype.toString.call(subj) === '[object Object]';
 		},
-		isRegExp: function (subj) {
+		isRegExp(subj) {
 			return Object.prototype.toString.call(subj) === '[object RegExp]';
 		},
-		isString: function (subj) {
+		isString(subj) {
 			return Object.prototype.toString.call(subj) === '[object String]';
 		},
 		isNaN: Number.isNaN || function (subj) {
 			return subj !== subj; // NaN is the only value that is not equal to itself
 		},
-		type: function (subj) {
+		type(subj) {
 			return Object.prototype.toString.call(subj).split(' ')[1].slice(0, -1).toLowerCase();
 		},
-		parseURL: function (url, parseSearch) {
+		parseURL(url, parseSearch) {
 			const a = document.createElement('a');
 			const props = ['hash', 'host', 'hostname', 'href', 'origin', 'password', 'pathname', 'port', 'protocol', 'search', 'username'];
 			const result = {};
@@ -893,12 +893,12 @@ var jsKit = (function () {
 
 			return result;
 		},
-		HTMLEntityDecode: function (text) {
+		HTMLEntityDecode(text) {
 			const textarea = document.createElement('textarea');
 			textarea.innerHTML = text;
 			return textarea.value;
 		},
-		HTMLEntityEncode: function (text) { // not tested yet
+		HTMLEntityEncode(text) { // not tested yet
 			text = text.replace(/[\u00A0-\u9999<>\&]/gim, function (i) {
 				return '&#' + i.charCodeAt(0) + ';';
 			});
@@ -936,7 +936,7 @@ var jsKit = (function () {
 				}
 			};
 		})(),
-		containsOnly: function (subj, val) {
+		containsOnly(subj, val) {
 			if (typeof subj === 'string') {
 				subj = subj.split('');
 			}
@@ -948,7 +948,7 @@ var jsKit = (function () {
 			}
 			return true;
 		},
-		getGETParameter: function (p) {
+		getGETParameter(p) {
 			const params = {};
 			let search = location.search;
 
@@ -963,7 +963,7 @@ var jsKit = (function () {
 
 			return (p === undefined) ? params : params[p];
 		},
-		isPrimeNumber: function (number) {
+		isPrimeNumber(number) {
 			if (number < 2 || number % 1 !== 0) { // filter out too small numbers and decimal numbers
 				return false;
 			}
@@ -976,7 +976,7 @@ var jsKit = (function () {
 
 			return true;
 		},
-		removeChilds: function (element) {
+		removeChilds(element) {
 			let counter = 0;
 
 			while (element.hasChildNodes()) { // innerHTML seems to be slower than removeChild
@@ -986,7 +986,7 @@ var jsKit = (function () {
 
 			return counter;
 		},
-		maybe: function () {
+		maybe() {
 			return new Promise(function (resolve, reject) {
 				if (!Math.round(Math.random())) {
 					resolve();
@@ -1008,10 +1008,10 @@ var jsKit = (function () {
 				return false;
 			};
 		})(),
-		xor: function (a, b) {
+		xor(a, b) {
 			return !a !== !b;
 		},
-		countCharacters: function (input) {
+		countCharacters(input) {
 			const chars = {};
 			input += '';
 
@@ -1022,10 +1022,10 @@ var jsKit = (function () {
 
 			return chars;
 		},
-		digitSum: function (x) {
+		digitSum(x) {
 			return (x - 1) % 9 + 1; // magic math
 		},
-		shuffle: function (a) {
+		shuffle(a) {
 			// if a single array is given, use that, otherwise use the arguments object
 			const arr = (Array.isArray(a) && arguments.length === 1) ? a : _js.toArray(arguments);
 
@@ -1037,12 +1037,12 @@ var jsKit = (function () {
 
 			return arr;
 		},
-		byteCount: function (s) {
+		byteCount(s) {
 			// returns the amount of bytes of a string by using encodeURI which encodes special characters to the format '%0F'
 			return encodeURI(s).split(/%..|./).length - 1;
 		},
 		/* ##################### TESTING AREA ##################### */
-		include: function (attr) {
+		include(attr) {
 			attr = attr || 'data-include';
 			const elements = document.querySelectorAll('[' + attr + ']');
 
@@ -1057,7 +1057,7 @@ var jsKit = (function () {
 				// elements[i].removeAttribute(attr);
 			}
 		},
-		forEach: function (subj, fn, args) {
+		forEach(subj, fn, args) {
 			if (_js.isArray(subj) || _js.isHTMLCollection(subj) || _js.isNodeList(subj)) {
 				for (let i = 0, iLen = subj.length; i < iLen; i++) {
 					fn.apply(subj, [subj[i], i, subj].concat(args || []));
@@ -1076,7 +1076,7 @@ var jsKit = (function () {
 				}
 			}
 		},
-		loadScript: function (url, callback) {
+		loadScript(url, callback) {
 			const script = document.createElement('script');
 
 			if (typeof callback === 'function') {
@@ -1087,7 +1087,7 @@ var jsKit = (function () {
 			script.src = url + (url.indexOf('?') === -1 ? '?' : '&') + '_=' + (Math.random() * 10); // if '?' is already included use '&'
 			document.body.appendChild(script); // start loading (in opposite to media elements scripts need to be added to the DOM)
 		},
-		scroll: function (a, callback) {
+		scroll(a, callback) {
 			let y, dir;
 
 			function scrollStep() {
@@ -1148,11 +1148,11 @@ var jsKit = (function () {
 				});
 			};
 		})(),
-		promise: function (callback) {
+		promise(callback) {
 			let value, resolveHandler, rejectHandler, returnedResolve, returnedReject;
 			let state = 'pending';
 			const promiseProto = {
-				then: function (onRes, onRej) {
+				then(onRes, onRej) {
 					let newPromise = _js.promise(function (resolve, reject) {
 						returnedResolve = resolve;
 						returnedReject = reject;
@@ -1195,7 +1195,7 @@ var jsKit = (function () {
 
 					return newPromise;
 				},
-				catch: function (onRej) {
+				catch(onRej) {
 					let newPromise = _js.promise(function (resolve, reject) {
 						returnedResolve = resolve;
 						returnedReject = reject;
@@ -1277,23 +1277,23 @@ var jsKit = (function () {
 
 			return promise;
 		},
-		observeProperty: function (obj, prop, onchange) {
+		observeProperty(obj, prop, onchange) {
 			const value = obj[prop];
 
 			if (delete obj[prop] && typeof onchange === 'function') {
 				Object.defineProperty(obj, prop, {
 					enumerable: true,
 					configurable: true,
-					set: function (val) {
+					set(val) {
 						value = onchange(prop, value, val);
 					},
-					get: function () {
+					get() {
 						return value;
 					}
 				});
 			}
 		},
-		params: function (input) {
+		params(input) {
 			let result;
 
 			if (typeof input === 'string') {
@@ -1328,7 +1328,7 @@ var jsKit = (function () {
 
 			return result;
 		},
-		jsonp: function (url, callback, paramName) {
+		jsonp(url, callback, paramName) {
 			const script = document.createElement('script');
 			const callbackName = 'jsKit_' + Math.floor(Math.random() * 1e12) + Math.floor(Math.random() * 1e12);
 
@@ -1344,7 +1344,7 @@ var jsKit = (function () {
 				document.body.appendChild(script);
 			}
 		},
-		deferred: function () {
+		deferred() {
 			const def = {};
 
 			def.promise = _js.promise(function (resolve, reject) {
@@ -1354,7 +1354,7 @@ var jsKit = (function () {
 
 			return def;
 		},
-		getObjectKeyPathes: function (obj) {
+		getObjectKeyPathes(obj) {
 			const result = {};
 
 			function nextLevel(startWith, o) {
@@ -1413,7 +1413,7 @@ var jsKit = (function () {
 			nextLevel('', obj)
 			return result;
 		},
-		fillTemplate: function (template, data) {
+		fillTemplate(template, data) {
 			return template && String(template).replace(/\{\{(\s?[^\}]+)\}\}/g, function (match, key) { // match mustaches
 				let result;
 				key = key.trim();
@@ -1429,7 +1429,7 @@ var jsKit = (function () {
 				return result;
 			});
 		},
-		curry: function (fn) {
+		curry(fn) {
 			const _this = this;
 			const args = [];
 
@@ -1440,7 +1440,7 @@ var jsKit = (function () {
 				};
 			}
 		},
-		inlineStylesheet: function (stylesheet) {
+		inlineStylesheet(stylesheet) {
 			return new Promise(function (resolve, reject) {
 				const doc = document.cloneNode(true);
 
@@ -1513,7 +1513,7 @@ var jsKit = (function () {
 				}
 			});
 		},
-		getNextDSTDate: function (startDate) { // get next date of Daylight Saving Time
+		getNextDSTDate(startDate) { // get next date of Daylight Saving Time
 			const date = (startDate instanceof Date) ? startDate : new Date();
 			const max = 365;
 
@@ -1582,7 +1582,7 @@ var jsKit = (function () {
 
 			return Observable;
 		})(),
-		random: function () { // this method should return a more random number by using `window.crypto` than the usual `Math.random`
+		random() { // this method should return a more random number by using `window.crypto` than the usual `Math.random`
 			const random = Math.random();
 
 			if (!crypto || !random) { // if random is zero, return it to avoid problems in following logic
@@ -1601,6 +1601,13 @@ var jsKit = (function () {
 			});
 
 			return Number('.' + numbers.join(''));
+		},
+		createWorker(fn) {
+			const workerUrl = typeof fn === 'function' ? URL.createObjectURL(new Blob([`(${fn.toString()})();`], {
+				text: 'application/javascript'
+			})) : null;
+
+			return workerUrl ? new Worker(workerUrl) : null;
 		}
 	};
 
